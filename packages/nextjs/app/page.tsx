@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -8,6 +10,15 @@ import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
+  const [performance, setPerformance] = useState("");
+  const [performanceJson, setPerformanceJson] = useState("");
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    const json = JSON.stringify({ performance });
+    setPerformanceJson(json);
+    setHash(ethers.id(json));
+  }, [performance]);
 
   return (
     <>
@@ -61,6 +72,20 @@ const Home: NextPage = () => {
                 tab.
               </p>
             </div>
+          </div>
+        </div>
+        <div className="w-full mt-16 px-8 py-12 bg-white shadow-md rounded-lg">
+          <h2 className="text-center text-2xl mb-4">Performance Input</h2>
+          <div className="flex flex-col items-center">
+            <input
+              type="text"
+              className="mb-4 p-2 border border-gray-300 rounded"
+              placeholder="Enter performance"
+              value={performance}
+              onChange={e => setPerformance(e.target.value)}
+            />
+            <p>JSON: {performanceJson}</p>
+            <p>Hash: {hash}</p>
           </div>
         </div>
       </div>
