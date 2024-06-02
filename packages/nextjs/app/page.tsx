@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import deployedContracts from "../contracts/deployedContracts";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
 
@@ -19,6 +20,17 @@ const Home: NextPage = () => {
     setPerformanceJson(json);
     setHash(ethers.id(json));
   }, [performance]);
+
+  const { data, error, isPending, writeContract } = useWriteContract();
+
+  const issueCredential = () => {
+    writeContract({
+      address: deployedContracts[31337].SoulBoundVC.address,
+      abi: deployedContracts[31337].SoulBoundVC.abi,
+      functionName: "issue",
+      args: [connectedAddress ?? "", ethers.id(performanceJson)],
+    });
+  };
 
   return (
     <>
@@ -86,6 +98,12 @@ const Home: NextPage = () => {
             />
             <p>JSON: {performanceJson}</p>
             <p>Hash: {hash}</p>
+            <button className="mt-4 p-2 bg-blue-500 text-white rounded" onClick={issueCredential}>
+              {isPending ? "Issuing..." : "Issue Credential"}
+            </button>
+            {isPending && <p>Transaction is pending...</p>}
+            {data && <p>Transaction successful!</p>}
+            {error && <p>Transaction failed: {error.message}</p>}
           </div>
         </div>
       </div>

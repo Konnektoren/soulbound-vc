@@ -2,11 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract SoulBoundVC is ERC721, Ownable {
+// contract SoulBoundVC is ERC721, Ownable { not ownable for hackathon
+contract SoulBoundVC is ERC721 {
     using Strings for uint256;
 
     uint256 public tokenCounter;
@@ -24,7 +25,7 @@ contract SoulBoundVC is ERC721, Ownable {
         tokenCounter = 0;
     }
 
-    function issue(address to, bytes32 credentialHash) public onlyOwner {
+    function issue(address to, bytes32 credentialHash) public {
         uint256 newTokenId = tokenCounter;
         _safeMint(to, newTokenId);
         _credentials[newTokenId] = Credential(credentialHash, false);
