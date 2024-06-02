@@ -5,7 +5,7 @@ import Link from "next/link";
 import deployedContracts from "../contracts/deployedContracts";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { useAccount, useWriteContract, useContractRead } from "wagmi";
+import { useAccount, useContractRead, useWriteContract } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
 
@@ -16,7 +16,6 @@ const Home: NextPage = () => {
   const [hash, setHash] = useState("");
   const [tokenId, setTokenId] = useState<number | null>(null);
   const [verificationResult, setVerificationResult] = useState<string | null>(null);
-
 
   useEffect(() => {
     const json = JSON.stringify({ performance });
@@ -39,8 +38,10 @@ const Home: NextPage = () => {
     address: deployedContracts[31337].SoulBoundVC.address,
     abi: deployedContracts[31337].SoulBoundVC.abi,
     functionName: "verify",
-    args: [tokenId ?? BigInt(0) , ethers.id(performanceJson)],
+    args: [BigInt(tokenId ?? 0), ethers.id(performanceJson)],
   });
+
+  console.log(verificationData);
 
   const verifyCredential = () => {
     refetchVerification().then(result => {
@@ -122,21 +123,21 @@ const Home: NextPage = () => {
             {error && <p>Transaction failed: {error.message}</p>}
           </div>
           <div className="w-full mt-16 px-8 py-12 bg-white shadow-md rounded-lg">
-          <h2 className="text-center text-2xl mb-4">Verify Credential</h2>
-          <div className="flex flex-col items-center">
-            <input
-              type="number"
-              className="mb-4 p-2 border border-gray-300 rounded"
-              placeholder="Enter token ID"
-              value={tokenId ?? ""}
-              onChange={e => setTokenId(Number(e.target.value))}
-            />
-            <button className="mt-4 p-2 bg-blue-500 text-white rounded" onClick={verifyCredential}>
-              Verify Credential
-            </button>
-            {verificationResult && <p>{verificationResult}</p>}
+            <h2 className="text-center text-2xl mb-4">Verify Credential</h2>
+            <div className="flex flex-col items-center">
+              <input
+                type="number"
+                className="mb-4 p-2 border border-gray-300 rounded"
+                placeholder="Enter token ID"
+                value={tokenId ?? ""}
+                onChange={e => setTokenId(Number(e.target.value))}
+              />
+              <button className="mt-4 p-2 bg-blue-500 text-white rounded" onClick={verifyCredential}>
+                Verify Credential
+              </button>
+              {verificationResult && <p>{verificationResult}</p>}
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </>
